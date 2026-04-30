@@ -10649,7 +10649,7 @@ class ApplicationWindow(QMainWindow):
                                 try:
                                     cmds = eval(cs[len('modifyPwrOffset'):])  # pylint: disable=eval-used
                                     if isinstance(cmds, (int)):
-                                        # cmd has format "modifyPwrOffset(xx)" x: -100...100
+                                        # cmd has format "modifyPwrOffset(xx)" xx: -100...100
                                         offset = self.pwroffset+cmds
                                         self.set_pwroffset(offset)
                                         _log.info('Artisan Command: <%s>', cs)
@@ -10657,6 +10657,7 @@ class ApplicationWindow(QMainWindow):
                                 except Exception as e:  # pylint: disable=broad-except
                                     self.sendmessage(f"Error setPwrOffset")
                                     _log.exception(e)
+                            # resetPID()
                             elif cs.startswith('resetPID') and cs.endswith(')'):
                                 try:
                                     self.qmc.pid.reset()
@@ -11383,8 +11384,7 @@ class ApplicationWindow(QMainWindow):
         slider = getattr(self, "slider%s" % (n + 1))
         v = slider.value()
         vnew = v + offsetdiff
-        slider.setValue(int(vnew))
-        self.sliderReleased(n, True, False)
+        self.addEvent_internal(int(vnew), n, True, True, True)
 
     @staticmethod
     @functools.cache
